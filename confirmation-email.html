@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gmail — NexaPoint ERP · Order confirmation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Google+Sans:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gm-bg: #f6f8fc;
+  --gm-surface: #fff;
+  --gm-sidebar: #f6f8fc;
+  --gm-ink: #202124;
+  --gm-muted: #5f6368;
+  --gm-line: #e8eaed;
+  --gm-red: #c5221f;
+  --gm-blue: #1a73e8;
+  --gm-yellow: #fbbc04;
+  --gm-green: #0f9d58;
+  --gm-hover: #eaecef;
+
+  --brand: #0b2f6b;
+  --brand-2: #16478f;
+  --accent: #b8935a;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  background: var(--gm-bg);
+  color: var(--gm-ink);
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+/* Gmail chrome */
+.gm-shell { display: grid; grid-template-rows: auto 1fr; height: 100vh; min-height: 100vh; }
+
+.gm-top {
+  display: grid; grid-template-columns: 256px 1fr auto;
+  align-items: center; gap: 16px;
+  padding: 8px 16px; background: var(--gm-bg);
+  border-bottom: 1px solid transparent;
+}
+.gm-top-brand { display: flex; align-items: center; gap: 10px; }
+.gm-menu-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent;
+  display: grid; place-items: center; cursor: pointer;
+}
+.gm-menu-btn:hover { background: var(--gm-hover); }
+.gm-logo-row { display: flex; align-items: center; gap: 2px; }
+.gm-logo-row svg { width: 40px; height: 30px; }
+.gm-logo-row .txt { font-family: "Google Sans", "Product Sans", Arial, sans-serif; font-size: 22px; color: var(--gm-muted); font-weight: 400; letter-spacing: -0.01em; }
+
+.gm-search {
+  background: #eaf1fb; border-radius: 8px; padding: 4px 12px;
+  display: flex; align-items: center; gap: 10px; max-width: 720px;
+  transition: background .2s ease;
+}
+.gm-search:focus-within { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.gm-search input { border: none; background: transparent; outline: none; padding: 10px 4px; flex: 1; font-size: 15px; font-family: inherit; color: var(--gm-ink); }
+.gm-search .s-ico { color: var(--gm-muted); }
+
+.gm-top-right { display: flex; align-items: center; gap: 4px; }
+.gm-top-right button {
+  width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent;
+  display: grid; place-items: center; cursor: pointer; color: var(--gm-muted);
+}
+.gm-top-right button:hover { background: var(--gm-hover); }
+.gm-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #0b2f6b, #16478f); color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 13px; margin-left: 8px; }
+
+.gm-main { display: grid; grid-template-columns: 256px 1fr; gap: 0; overflow: hidden; }
+
+.gm-sidebar { padding: 8px 0; overflow-y: auto; }
+.gm-compose {
+  display: inline-flex; align-items: center; gap: 14px; margin: 8px 16px 16px;
+  padding: 14px 24px 14px 16px; background: #c2e7ff; color: #001d35;
+  border-radius: 16px; font-weight: 500; font-size: 14px; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1); transition: box-shadow .2s ease;
+}
+.gm-compose:hover { box-shadow: 0 2px 6px rgba(0,0,0,.15); background: #b3dffe; }
+.gm-nav { list-style: none; padding: 0; margin: 0; }
+.gm-nav li {
+  display: flex; align-items: center; gap: 18px; padding: 0 12px 0 26px;
+  height: 32px; border-radius: 0 16px 16px 0; margin-right: 12px;
+  cursor: pointer; color: var(--gm-ink); font-size: 14px;
+}
+.gm-nav li:hover { background: var(--gm-hover); }
+.gm-nav li.active { background: #d3e3fd; font-weight: 700; color: #001d35; }
+.gm-nav li .cnt { margin-left: auto; font-size: 12px; color: var(--gm-muted); font-weight: 500; }
+.gm-nav li.active .cnt { color: #001d35; }
+.gm-nav-sep { height: 1px; background: var(--gm-line); margin: 8px 16px; }
+.gm-labels { padding: 0 26px; font-size: 12px; color: var(--gm-muted); margin: 12px 0 6px; letter-spacing: .02em; text-transform: uppercase; }
+
+/* Content area */
+.gm-content {
+  background: var(--gm-surface); border-radius: 16px 0 0 0;
+  margin: 0; overflow-y: auto; border-left: 1px solid var(--gm-line);
+}
+.gm-toolbar {
+  display: flex; align-items: center; gap: 2px; padding: 6px 16px;
+  border-bottom: 1px solid var(--gm-line); position: sticky; top: 0; background: var(--gm-surface); z-index: 5;
+}
+.gm-toolbar button {
+  width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent;
+  display: grid; place-items: center; cursor: pointer; color: var(--gm-muted);
+}
+.gm-toolbar button:hover { background: var(--gm-hover); }
+.gm-toolbar .sep { width: 1px; height: 18px; background: var(--gm-line); margin: 0 6px; }
+.gm-toolbar .counter { margin-left: auto; font-size: 12px; color: var(--gm-muted); display: flex; align-items: center; gap: 6px; }
+
+/* Email */
+.gm-email { padding: 20px 40px 60px; max-width: 100%; }
+.gm-subject-row { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; padding-left: 56px; }
+.gm-subject { font-size: 22px; font-weight: 400; color: var(--gm-ink); letter-spacing: -0.01em; }
+.gm-chip { padding: 2px 8px; border-radius: 4px; font-size: 11px; color: var(--gm-muted); border: 1px solid var(--gm-line); font-weight: 500; }
+.gm-star { color: var(--gm-muted); margin-left: auto; cursor: pointer; }
+
+.gm-message {
+  display: grid; grid-template-columns: 40px 1fr auto; gap: 16px;
+  padding: 10px 0;
+}
+.gm-sender-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #0b2f6b, #16478f);
+  color: #fff; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 500; font-size: 18px;
+  position: relative;
+}
+.gm-sender-avatar::after {
+  content: ""; position: absolute; inset: 10px; border-radius: 3px;
+  background: #b8935a; transform: rotate(45deg);
+}
+.gm-msg-meta { min-width: 0; }
+.gm-sender { font-weight: 700; font-size: 14px; color: var(--gm-ink); }
+.gm-sender-email { color: var(--gm-muted); font-size: 12px; font-weight: 400; margin-left: 4px; }
+.gm-to { font-size: 12px; color: var(--gm-muted); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+.gm-time { font-size: 12px; color: var(--gm-muted); white-space: nowrap; }
+.gm-time strong { font-weight: 500; color: var(--gm-ink); }
+.gm-msg-actions { display: flex; gap: 4px; margin-top: 2px; }
+.gm-msg-actions button { width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; display: grid; place-items: center; cursor: pointer; color: var(--gm-muted); }
+.gm-msg-actions button:hover { background: var(--gm-hover); }
+
+/* The actual email body */
+.email-body {
+  margin-top: 12px; margin-left: 56px;
+  background: #fff;
+  border: 1px solid var(--gm-line); border-radius: 12px;
+  overflow: hidden; max-width: 720px;
+  font-family: "Inter Tight", Arial, sans-serif;
+  color: #202124;
+}
+
+.email-hero {
+  background: #0b1e3a; color: #fff; padding: 40px 36px 32px;
+  position: relative; overflow: hidden;
+}
+.email-hero::after {
+  content: ""; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(184,147,90,.25), transparent 70%);
+}
+.email-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.email-brand-mark { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #0b2f6b, #16478f); position: relative; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); }
+.email-brand-mark::after { content: ""; position: absolute; inset: 7px; border-radius: 2px; background: #b8935a; transform: rotate(45deg); }
+.email-brand-name { font-family: var(--serif); font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.email-hero h1 { font-family: var(--serif); font-size: 32px; font-weight: 500; line-height: 1.15; margin: 0 0 10px; letter-spacing: -0.02em; }
+.email-hero h1 em { font-style: italic; color: #d4ad72; }
+.email-hero p { margin: 0; color: rgba(255,255,255,.75); font-size: 14px; line-height: 1.5; max-width: 440px; }
+
+.email-ref-bar {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 20px 36px; background: #f6f5f1; border-bottom: 1px solid #e4e1d6;
+}
+.email-ref-bar .k { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #5b6b86; }
+.email-ref-bar .v { font-family: var(--serif); font-size: 15px; color: #0b1e3a; margin-top: 2px; }
+
+.email-section { padding: 28px 36px; border-bottom: 1px solid #e4e1d6; }
+.email-section:last-child { border-bottom: none; }
+.email-greeting { font-family: var(--serif); font-size: 20px; color: #0b1e3a; margin: 0 0 12px; }
+.email-para { font-size: 14px; line-height: 1.6; color: #1f3356; margin: 0 0 14px; }
+.email-para:last-child { margin-bottom: 0; }
+.email-para strong { color: #0b1e3a; }
+
+.email-next { display: grid; gap: 14px; margin-top: 6px; }
+.email-next .step {
+  display: grid; grid-template-columns: 32px 1fr auto; gap: 14px; align-items: start;
+  padding: 14px 16px; background: #faf8f3; border: 1px solid #e4e1d6; border-radius: 10px;
+}
+.email-next .step .num {
+  width: 28px; height: 28px; border-radius: 50%; background: #0b1e3a; color: #fff;
+  display: grid; place-items: center; font-weight: 600; font-size: 13px; font-family: var(--serif);
+}
+.email-next .step .title { font-family: var(--serif); font-size: 15px; color: #0b1e3a; }
+.email-next .step .desc { font-size: 12px; color: #5b6b86; margin-top: 2px; line-height: 1.45; }
+.email-next .step .when { font-size: 11px; color: #8b6a3a; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+
+.email-summary-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.email-summary-table td { padding: 12px 0; border-bottom: 1px solid #e4e1d6; font-size: 13px; vertical-align: top; }
+.email-summary-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
+.email-summary-table .name { font-family: var(--serif); font-size: 14px; color: #0b1e3a; }
+.email-summary-table .sub { font-size: 11px; color: #5b6b86; margin-top: 2px; }
+.email-summary-table .total-row td { border-bottom: none; border-top: 2px solid #0b1e3a; padding-top: 16px; font-family: var(--serif); font-size: 18px; color: #0b1e3a; }
+
+.email-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.email-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 22px; border-radius: 999px; font-weight: 500; font-size: 13px;
+  text-decoration: none; transition: transform .15s ease, background .2s ease;
+}
+.email-btn-primary { background: #0b1e3a; color: #fff; }
+.email-btn-primary:hover { background: #16478f; transform: translateY(-1px); }
+.email-btn-ghost { background: transparent; color: #0b1e3a; border: 1px solid #d8d4c7; }
+.email-btn-ghost:hover { border-color: #0b1e3a; }
+
+.email-support {
+  background: #faf8f3; padding: 24px 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  border-top: 1px solid #e4e1d6;
+}
+.email-support .k { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #5b6b86; margin-bottom: 4px; }
+.email-support .v { font-size: 13px; color: #0b1e3a; }
+.email-support a { color: #16478f; text-decoration: none; }
+
+.email-footer {
+  padding: 24px 36px; background: #0b1e3a; color: rgba(255,255,255,.6);
+  font-size: 11px; line-height: 1.6; text-align: center;
+}
+.email-footer a { color: rgba(255,255,255,.85); text-decoration: none; margin: 0 8px; }
+
+/* Reply/forward chip row */
+.gm-reply-row {
+  display: flex; gap: 10px; margin: 20px 0 0 56px; max-width: 720px;
+}
+.gm-reply-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 24px; border: 1px solid var(--gm-line); border-radius: 999px;
+  background: #fff; color: var(--gm-ink); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .15s ease;
+}
+.gm-reply-btn:hover { background: var(--gm-hover); }
+
+/* --- Empty / loading state --- */
+.no-order {
+  display: grid; place-items: center; height: 60vh; padding: 40px;
+  text-align: center;
+}
+.no-order h2 { font-family: var(--serif); font-size: 26px; margin: 0 0 10px; color: var(--gm-ink); }
+.no-order p { font-size: 14px; color: var(--gm-muted); max-width: 420px; margin: 0 0 20px; }
+.no-order a {
+  display: inline-flex; padding: 12px 22px; border-radius: 999px;
+  background: #0b1e3a; color: #fff; text-decoration: none; font-size: 13px; font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .gm-main { grid-template-columns: 1fr; }
+  .gm-sidebar { display: none; }
+  .gm-top { grid-template-columns: auto 1fr auto; }
+  .gm-top-brand { display: none; }
+  .gm-content { border-radius: 0; border-left: none; }
+  .gm-email { padding: 16px; }
+  .gm-subject-row, .email-body { padding-left: 0; margin-left: 0; }
+  .gm-message { grid-template-columns: 40px 1fr; }
+  .gm-time { grid-column: 2; }
+  .email-hero, .email-section, .email-support, .email-footer, .email-ref-bar { padding-left: 20px; padding-right: 20px; }
+  .email-ref-bar { grid-template-columns: 1fr; gap: 10px; }
+  .email-support { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="gm-shell">
+  <!-- Top bar -->
+  <div class="gm-top">
+    <div class="gm-top-brand">
+      <button class="gm-menu-btn" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <div class="gm-logo-row">
+        <svg viewBox="0 0 52 40" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 8v26c0 1.1.9 2 2 2h6V20L26 30l15-10v16h6c1.1 0 2-.9 2-2V8l-6-4L26 16 9 4 3 8z" fill="#EA4335"/>
+          <path d="M3 8l6-4v30H5c-1.1 0-2-.9-2-2V8z" fill="#C5221F"/>
+          <path d="M49 8v26c0 1.1-.9 2-2 2h-6V16l6-8z" fill="#34A853"/>
+          <path d="M41 16l-15 10L11 16V4l15 12L41 4v12z" fill="#FBBC04"/>
+          <path d="M11 4v12L3 8l8-4z" fill="#C5221F"/>
+          <path d="M41 4v12l8-8-8-4z" fill="#188038"/>
+        </svg>
+        <span class="txt">Gmail</span>
+      </div>
+    </div>
+    <div class="gm-search">
+      <span class="s-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.8l-.3-.3c1-1.1 1.6-2.6 1.6-4.2C16 5.9 13.1 3 9.5 3S3 5.9 3 9.5 5.9 16 9.5 16c1.6 0 3.1-.6 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0C7 14 5 12 5 9.5S7 5 9.5 5 14 7 14 9.5 12 14 9.5 14z"/></svg></span>
+      <input value="from:nexapoint.io" placeholder="Search mail"/>
+      <button style="background:none;border:none;color:#5f6368;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm4 5h8v2H8zm2 5h4v2h-4z"/></svg></button>
+    </div>
+    <div class="gm-top-right">
+      <button title="Support"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg></button>
+      <button title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></button>
+      <button title="Apps"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+      <div class="gm-avatar" id="userInitial">J</div>
+    </div>
+  </div>
+
+  <div class="gm-main">
+    <!-- Sidebar -->
+    <aside class="gm-sidebar">
+      <button class="gm-compose">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#001d35"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Compose
+      </button>
+      <ul class="gm-nav">
+        <li class="active"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Inbox <span class="cnt">1</span></li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Snoozed</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> Starred</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Sent</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-9h-7V3zm2 0v5h5l-5-5z"/></svg> Drafts</li>
+        <div class="gm-nav-sep"></div>
+        <div class="gm-labels">Labels</div>
+        <li><span style="width:12px;height:12px;border-radius:3px;background:#0b2f6b"></span> NexaPoint</li>
+        <li><span style="width:12px;height:12px;border-radius:3px;background:#b8935a"></span> Procurement</li>
+        <li><span style="width:12px;height:12px;border-radius:3px;background:#0f9d58"></span> Invoices</li>
+      </ul>
+    </aside>
+
+    <!-- Content -->
+    <section class="gm-content">
+      <div class="gm-toolbar">
+        <button title="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+        <div class="sep"></div>
+        <button title="Archive"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg></button>
+        <button title="Report spam"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/></svg></button>
+        <button title="Delete"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        <div class="sep"></div>
+        <button title="Mark unread"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 4.99L4 6h16zm0 12H4V8l8 5 8-5v10z"/></svg></button>
+        <button title="Move to"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg></button>
+        <div class="counter">
+          <span>1 of 2,483</span>
+          <button><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+          <button><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="gm-email" id="emailRoot">
+        <!-- injected -->
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const CURRENCIES = {
+  USD: { symbol: "$", rate: 1, code: "USD" },
+  EUR: { symbol: "€", rate: 0.92, code: "EUR" },
+  PKR: { symbol: "₨", rate: 278, code: "PKR" },
+  GBP: { symbol: "£", rate: 0.79, code: "GBP" },
+};
+const fmtMoney = (usd, curCode = "USD") => {
+  const c = CURRENCIES[curCode] || CURRENCIES.USD;
+  const v = usd * c.rate;
+  const formatted = v >= 1000 ? v.toLocaleString(undefined, { maximumFractionDigits: 0 }) : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  return `${c.symbol}${formatted}`;
+};
+const esc = (s) => String(s || "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+
+// Try to load the last real order; otherwise use a demo payload.
+let order;
+try { order = JSON.parse(localStorage.getItem("np_last_order")); } catch {}
+if (!order) {
+  order = {
+    orderRef: "NP-2026-48271",
+    proposalRef: "PR-2026-3814",
+    orderDate: new Date().toISOString(),
+    currency: "USD",
+    device: { name: "MacBook Pro 16″", subtitle: "M4 Max · workstation-class", specs: ["M4 Max","64GB","2TB SSD"], price: 3499 },
+    software: [
+      { id: "erp", name: "NexaPoint ERP Suite", tag: "Flagship", monthly: 249, icon: "ER" },
+      { id: "bms", name: "Business Management System", tag: "Operations", monthly: 149, icon: "BM" },
+      { id: "bi", name: "Analytics & BI", tag: "Insight", monthly: 139, icon: "BI" },
+    ],
+    form: {
+      company: "Acme Industries Ltd.",
+      contact: "Jane Doe", role: "Chief Financial Officer",
+      email: "jane.doe@acme.com", phone: "+1 555 234 5678",
+      address: "1 Infinite Loop, Suite 400", city: "Cupertino", country: "United States", postal: "95014",
+      seats: "25", deployment: "cloud", payment: "card", cardNum: "4242 4242 4242 4242",
+    },
+  };
+}
+
+const { device, software = [], form, currency = "USD", orderRef, proposalRef, orderDate } = order;
+const chosen = software;
+const monthlyUSD = chosen.reduce((a, s) => a + (s.monthly || 0), 0);
+const implFeeUSD = 1500 + chosen.length * 600;
+const annualUSD = monthlyUSD * 12;
+const subtotalUSD = device.price + implFeeUSD + annualUSD;
+const taxUSD = subtotalUSD * 0.08;
+const totalUSD = subtotalUSD + taxUSD;
+
+const dt = new Date(orderDate);
+const sentDate = dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+const sentTime = dt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+
+const firstName = (form.contact || "there").split(" ")[0];
+document.getElementById("userInitial").textContent = (firstName[0] || "J").toUpperCase();
+
+const deployLabel = form.deployment === "cloud" ? "NexaPoint Cloud" : "On-premise";
+const payLabel = form.payment === "card"
+  ? `Credit card ending in ${(form.cardNum || "••••").slice(-4)}`
+  : form.payment === "wire" ? "Bank wire transfer (invoice within 24h)" : "Purchase order · Net 30";
+
+const itemRows = [
+  `<tr>
+    <td><div class="name">${esc(device.name)}</div><div class="sub">${esc((device.specs || []).join(", "))} · pre-configured</div></td>
+    <td>${fmtMoney(device.price, currency)}</td>
+  </tr>`,
+  ...chosen.map(s => `<tr>
+    <td><div class="name">${esc(s.name)}</div><div class="sub">${esc(s.tag || "")} · ${esc(form.seats || "—")} seats · 12-month subscription</div></td>
+    <td>${fmtMoney(s.monthly * 12, currency)}</td>
+  </tr>`),
+  `<tr>
+    <td><div class="name">Implementation & onboarding</div><div class="sub">Discovery, config, migration, training, hypercare</div></td>
+    <td>${fmtMoney(implFeeUSD, currency)}</td>
+  </tr>`,
+].join("");
+
+document.getElementById("emailRoot").innerHTML = `
+  <div class="gm-subject-row">
+    <span class="gm-subject">Your NexaPoint order is confirmed — ${esc(orderRef)}</span>
+    <span class="gm-chip">Inbox</span>
+    <span class="gm-chip" style="color:#0b2f6b;border-color:#c9d6ee;background:#eaf1fb">NexaPoint</span>
+    <span class="gm-star">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    </span>
+  </div>
+
+  <div class="gm-message">
+    <div class="gm-sender-avatar"></div>
+    <div class="gm-msg-meta">
+      <div><span class="gm-sender">NexaPoint ERP Ltd.</span><span class="gm-sender-email">&lt;orders@nexapoint.io&gt;</span></div>
+      <div class="gm-to">to ${esc(form.email || "me")} ▾</div>
+    </div>
+    <div style="text-align:right">
+      <div class="gm-time"><strong>${esc(sentDate)}, ${esc(sentTime)}</strong> (just now)</div>
+      <div class="gm-msg-actions">
+        <button title="Reply"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></button>
+        <button title="More"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="email-body">
+    <div class="email-hero">
+      <div class="email-brand">
+        <div class="email-brand-mark"></div>
+        <div class="email-brand-name">NexaPoint</div>
+      </div>
+      <h1>Your order is <em>confirmed.</em></h1>
+      <p>Thank you, ${esc(firstName)}. We've received your order and kicked off provisioning. Everything you need is below — keep this email for your records.</p>
+    </div>
+
+    <div class="email-ref-bar">
+      <div><div class="k">Order reference</div><div class="v">${esc(orderRef)}</div></div>
+      <div><div class="k">Proposal</div><div class="v">${esc(proposalRef)}</div></div>
+      <div><div class="k">Placed</div><div class="v">${esc(sentDate)}</div></div>
+    </div>
+
+    <div class="email-section">
+      <h2 class="email-greeting">Hi ${esc(firstName)},</h2>
+      <p class="email-para">
+        We're delighted to welcome <strong>${esc(form.company)}</strong> to NexaPoint. Your <strong>${esc(device.name)}</strong>
+        will ship pre-configured with your selected modules, and our implementation team will reach out within
+        <strong>2 business days</strong> to schedule discovery.
+      </p>
+      <p class="email-para">
+        You're all set on the <strong>${esc(deployLabel)}</strong> plan with <strong>${esc(form.seats)} seats</strong>,
+        paid via <strong>${esc(payLabel)}</strong>.
+      </p>
+    </div>
+
+    <div class="email-section">
+      <h2 class="email-greeting" style="font-size:16px;margin-bottom:16px">What happens next</h2>
+      <div class="email-next">
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <div class="title">Welcome call &amp; kickoff</div>
+            <div class="desc">Your dedicated implementation lead will reach out to schedule discovery and align on scope.</div>
+          </div>
+          <div class="when">Within 2 days</div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <div class="title">Device provisioning</div>
+            <div class="desc">Your ${esc(device.name)} ships fully configured with NexaPoint OS, your modules pre-installed and SSO enabled.</div>
+          </div>
+          <div class="when">Week 1</div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <div class="title">Configuration &amp; data migration</div>
+            <div class="desc">We'll configure modules to your workflows and migrate historical data in parallel with training sessions.</div>
+          </div>
+          <div class="when">Weeks 2–8</div>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <div class="title">Go-live &amp; hypercare</div>
+            <div class="desc">Cutover, followed by 30 days of hypercare with daily stand-ups and on-demand support.</div>
+          </div>
+          <div class="when">Weeks 9–10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="email-section">
+      <h2 class="email-greeting" style="font-size:16px;margin-bottom:6px">Order summary</h2>
+      <table class="email-summary-table">
+        ${itemRows}
+        <tr><td style="color:#5b6b86;font-size:12px">Subtotal</td><td style="font-size:13px">${fmtMoney(subtotalUSD, currency)}</td></tr>
+        <tr><td style="color:#5b6b86;font-size:12px">VAT / sales tax (8%)</td><td style="font-size:13px">${fmtMoney(taxUSD, currency)}</td></tr>
+        <tr class="total-row"><td>Total paid</td><td>${fmtMoney(totalUSD, currency)}</td></tr>
+      </table>
+      <div class="email-cta-row" style="margin-top:20px">
+        <a class="email-btn email-btn-primary" href="#">Download invoice (PDF)</a>
+        <a class="email-btn email-btn-ghost" href="#">View in dashboard</a>
+      </div>
+    </div>
+
+    <div class="email-support">
+      <div>
+        <div class="k">Your implementation lead</div>
+        <div class="v">Arsalan Khan · <a href="mailto:arsalan@nexapoint.io">arsalan@nexapoint.io</a></div>
+      </div>
+      <div>
+        <div class="k">Billing &amp; support</div>
+        <div class="v"><a href="mailto:support@nexapoint.io">support@nexapoint.io</a> · +44 20 7946 0011</div>
+      </div>
+    </div>
+
+    <div class="email-footer">
+      NexaPoint ERP Ltd. · 22 Finsbury Square, Floor 6, London EC2A 1DX, United Kingdom<br/>
+      <a href="#">Preferences</a> · <a href="#">Unsubscribe from marketing</a> · <a href="#">Privacy policy</a><br/>
+      <div style="margin-top:10px;opacity:.6">This email was sent because an order was placed under your account. Transactional receipts cannot be unsubscribed.</div>
+    </div>
+  </div>
+
+  <div class="gm-reply-row">
+    <button class="gm-reply-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg> Reply
+    </button>
+    <button class="gm-reply-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z"/></svg> Forward
+    </button>
+  </div>
+`;
+</script>
+</body>
+</html>

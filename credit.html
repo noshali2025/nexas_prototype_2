@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NexaPoint — Credit & Compliance Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Shell ──────────────────────────────────────────────────────────── */
+.cr-shell { display: flex; min-height: 100vh; }
+
+.cr-sidebar {
+  width: 230px; flex-shrink: 0; background: #071428;
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto;
+}
+.cr-logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; gap: 10px;
+}
+.cr-logo-mark {
+  width: 32px; height: 32px; border-radius: 7px;
+  background: linear-gradient(135deg, #16478f, #0b2f6b);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 15px; color: #fff; font-weight: 600;
+  flex-shrink: 0;
+}
+.cr-nav-section {
+  padding: 14px 16px 4px;
+  font-size: 9px; font-weight: 700; letter-spacing: .13em;
+  text-transform: uppercase; color: rgba(255,255,255,.25);
+}
+.cr-nav-item {
+  display: flex; align-items: center; gap: 9px;
+  width: calc(100% - 12px); margin: 1px 6px;
+  padding: 9px 12px; border: none; border-radius: 7px;
+  background: none; cursor: pointer; text-align: left;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,.48); transition: all .15s;
+}
+.cr-nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.88); }
+.cr-nav-item.active { background: rgba(22,71,143,.35); color: #c8dff8; }
+.cr-nav-item .cr-badge {
+  margin-left: auto; min-width: 18px; height: 18px; border-radius: 9px;
+  background: #a3331f; color: #fff; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; padding: 0 5px;
+}
+.cr-user {
+  margin-top: auto; padding: 14px 16px 20px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; gap: 10px;
+}
+.cr-avatar {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: #16478f; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+
+.cr-main { margin-left: 230px; flex: 1; background: #f5f4f0; min-height: 100vh; }
+.cr-topbar {
+  height: 56px; background: var(--surface); border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; padding: 0 30px; gap: 12px;
+  position: sticky; top: 0; z-index: 50;
+}
+.cr-content { padding: 30px; max-width: 1350px; }
+
+/* ── Cards ──────────────────────────────────────────────────────────── */
+.cr-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px 24px;
+}
+.cr-stat {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px; border-top: 3px solid;
+}
+
+/* ── Table ──────────────────────────────────────────────────────────── */
+.cr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cr-table th {
+  padding: 9px 14px; text-align: left; font-size: 10.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+  background: var(--bg-alt); border-bottom: 1px solid var(--line-2); white-space: nowrap;
+}
+.cr-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.cr-table tbody tr { cursor: pointer; transition: background .1s; }
+.cr-table tbody tr:hover { background: var(--bg-alt); }
+.cr-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── Badge ──────────────────────────────────────────────────────────── */
+.cr-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+}
+.cr-chip.ai { background: rgba(22,71,143,.10); color: #16478f; }
+.cr-chip.staff { background: rgba(139,106,58,.12); color: #8b6a3a; }
+
+/* ── AI Engine UI ───────────────────────────────────────────────────── */
+.ai-check-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); transition: all .3s;
+}
+.ai-check-row.running { border-color: #16478f; background: rgba(22,71,143,.04); }
+.ai-check-row.pass { border-color: #1b6b4a; background: rgba(27,107,74,.05); }
+.ai-check-row.warn { border-color: #b8935a; background: rgba(184,147,90,.06); }
+.ai-check-row.fail { border-color: #a3331f; background: rgba(163,51,31,.06); }
+.ai-check-row.pending { opacity: .45; }
+
+.ai-spinner {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(22,71,143,.2); border-top-color: #16478f;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.ai-dot {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.ai-dot.pass { background: rgba(27,107,74,.12); color: #1b6b4a; }
+.ai-dot.warn { background: rgba(184,147,90,.15); color: #8b6a3a; }
+.ai-dot.fail { background: rgba(163,51,31,.12); color: #a3331f; }
+.ai-dot.pending { background: var(--line); }
+
+.ai-bar { height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; flex: 1; }
+.ai-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+
+/* ── Document preview ───────────────────────────────────────────────── */
+.doc-thumb {
+  width: 100%; aspect-ratio: 4/3; border-radius: 8px;
+  border: 1px solid var(--line); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  transition: all .15s; overflow: hidden;
+}
+.doc-thumb:hover { border-color: #16478f; background: rgba(22,71,143,.03); }
+.doc-thumb.uploaded { background: var(--bg-alt); }
+.doc-thumb.missing { background: repeating-linear-gradient(45deg, var(--bg-alt) 0, var(--bg-alt) 5px, var(--surface) 5px, var(--surface) 10px); opacity: .6; }
+
+/* ── Modal ──────────────────────────────────────────────────────────── */
+.cr-modal-bg {
+  position: fixed; inset: 0; background: rgba(7,20,40,.7);
+  z-index: 500; display: flex; overflow-y: auto; padding: 20px;
+  backdrop-filter: blur(6px);
+}
+.cr-modal {
+  background: var(--surface); border-radius: var(--radius-lg);
+  border: 1px solid var(--line-2); box-shadow: 0 24px 64px rgba(0,0,0,.22);
+  width: min(1100px, 96vw); margin: auto; animation: crUp .28s ease;
+  display: flex; flex-direction: column; max-height: 92vh;
+}
+@keyframes crUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+.cr-modal-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 20px 28px; border-bottom: 1px solid var(--line); flex-shrink: 0;
+}
+.cr-modal-body { overflow-y: auto; flex: 1; padding: 0; }
+.cr-tabs {
+  display: flex; border-bottom: 1px solid var(--line);
+  padding: 0 28px; flex-shrink: 0;
+}
+.cr-tab {
+  padding: 13px 18px; border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer; font-family: var(--sans); font-size: 13px;
+  font-weight: 500; color: var(--muted); margin-bottom: -1px; transition: all .15s;
+}
+.cr-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.cr-tab-body { padding: 24px 28px; }
+
+/* ── Decision panel ─────────────────────────────────────────────────── */
+.decision-btn {
+  flex: 1; padding: 16px; border-radius: 10px; border: 2px solid transparent;
+  cursor: pointer; font-family: var(--sans); font-weight: 600; font-size: 14px;
+  transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.decision-btn.approve { background: rgba(27,107,74,.08); border-color: rgba(27,107,74,.25); color: #1b6b4a; }
+.decision-btn.approve:hover, .decision-btn.approve.selected { background: #1b6b4a; color: #fff; border-color: #1b6b4a; }
+.decision-btn.decline { background: rgba(163,51,31,.07); border-color: rgba(163,51,31,.22); color: #a3331f; }
+.decision-btn.decline:hover, .decision-btn.decline.selected { background: #a3331f; color: #fff; border-color: #a3331f; }
+.decision-btn.request { background: rgba(184,147,90,.08); border-color: rgba(184,147,90,.3); color: #8b6a3a; }
+.decision-btn.request:hover, .decision-btn.request.selected { background: #8b6a3a; color: #fff; border-color: #8b6a3a; }
+
+/* ── Misc ───────────────────────────────────────────────────────────── */
+.search-bar {
+  display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+  border: 1px solid var(--line-2); border-radius: var(--radius-sm);
+  background: var(--surface); width: 280px;
+}
+.search-bar input { border: none; background: none; outline: none; font-size: 13px; color: var(--ink); flex: 1; font-family: var(--sans); }
+
+.chip-f {
+  padding: 6px 14px; border: 1px solid var(--line-2); border-radius: 20px;
+  background: var(--surface); cursor: pointer; font-size: 12px; font-weight: 500;
+  color: var(--muted); transition: all .13s; white-space: nowrap;
+}
+.chip-f.on { background: #071428; color: #fff; border-color: #071428; }
+
+.score-ring {
+  width: 70px; height: 70px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; flex-shrink: 0;
+}
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="credit.jsx"></script>
+</body>
+</html>

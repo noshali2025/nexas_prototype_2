@@ -1,0 +1,46 @@
+/* Print overrides for NexaPoint Prototype */
+@page { size: A3 landscape; margin: 0.4cm; }
+
+html, body { background: #f6f5f1 !important; }
+
+/* Each screen on its own page */
+.print-page {
+  page-break-after: always;
+  break-after: page;
+  position: relative;
+}
+.print-page:last-child { page-break-after: auto; break-after: auto; }
+
+/* Hide sticky/interactive chrome that doesn't suit paged output */
+.tweaks-panel { display: none !important; }
+
+/* Make nav not sticky in print */
+.nav {
+  position: static !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: var(--bg) !important;
+}
+
+/* Prevent awkward breaks inside cards/sections */
+.device-card, .soft-card, .side-card, .proposal-section, .form-section,
+.invoice, .success-banner, .email-body, .proposal, .form-card {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Loosen sticky so side card renders in flow */
+.side-card { position: static !important; }
+
+@media print {
+  html, body, .app-shell { background: #f6f5f1 !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .page { padding: 24px 32px 40px !important; }
+  .tweaks-panel { display: none !important; }
+
+  /* Hide buttons / action rows that don't belong on paper */
+  .action-row, .proposal-foot .btn, .form-foot .btn { display: none !important; }
+
+  /* Softly disable hover transforms */
+  * { transition: none !important; animation: none !important; }
+}
